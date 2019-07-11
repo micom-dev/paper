@@ -102,3 +102,15 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# mac
+._*
+.DS*
+draft*
+
+# too large files
+data/alignments
+data/preprocessed
+data/slimm_reports
+data/raw
+.drake
