@@ -18,7 +18,7 @@ xax = axes[-1].xaxis
 xax.set_ticklabels(lf(10.0 ** ex) for ex in xax.get_ticklocs())
 plt.xlabel("growth rate [1/h]")
 plt.ylabel("tradeoff")
-plt.savefig("dists.svg")
+plt.savefig("figures/dists.svg")
 plt.close()
 
 non_zero = (
