@@ -8,7 +8,10 @@ from micom.workflows import workflow
 
 micom.logger.file_logger("micom.log")
 logger = micom.logger.logger
-max_procs = 20
+try:
+    max_procs = snakemake.threads
+except NameError:
+    max_procs = 20
 
 taxonomy = pd.read_csv("data/genera.csv").dropna(subset=["agora_id"])
 taxonomy["file"] = taxonomy.agora_id.apply(

@@ -1,12 +1,18 @@
 """Calculate the elasticities for a set of built models."""
 
 from os.path import isfile
+import micom
 from micom import load_pickle
 from micom.elasticity import exchange_elasticities
 from micom.workflows import workflow
 
 
-max_procs = 20
+micom.logger.file_logger("micom.log")
+logger = micom.logger.logger
+try:
+    max_procs = snakemake.threads
+except NameError:
+    max_procs = 20
 
 
 def elasticities(sam):
