@@ -27,7 +27,7 @@ def reduce_group(df):
 
 
 agora = micom.data.agora
-agora_genus = agora.groupby("genus").apply(reduce_group).reset_index()
+agora_genus = agora.groupby("genus").apply(reduce_group).reset_index(drop=True)
 
 genera = pd.read_csv("data/abundances.csv")
 genera = (
