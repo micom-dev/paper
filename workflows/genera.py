@@ -34,7 +34,10 @@ genera = (
     genera.groupby(["rank", "id", "class", "order", "family", "genus"])
     .apply(
         lambda df: pd.DataFrame(
-            {"reads": df.reads.sum(), "relative": df.relative.sum()}
+            {
+                "reads": df.reads.sum().values,
+                "relative": df.relative.sum().values,
+            }
         )
     )
     .reset_index()
