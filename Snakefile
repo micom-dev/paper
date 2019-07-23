@@ -2,11 +2,11 @@ samples = ["ERR260275", "ERR260214", "ERR260174"]
 
 rule all:
     input:
-        "data/growth_rates.csv"
-        "data/knockouts.csv"
-        "figures/gcs.svg"
-        "figures/circos.svg"
-        "figures/media.png"
+        "data/growth_rates.csv",
+        "data/knockouts.csv",
+        "figures/gcs.svg",
+        "figures/circos.svg",
+        "figures/media.png",
         expand("figures/elasticities_{s}.png", s=samples)
 
 rule collapse:
@@ -19,7 +19,7 @@ rule collapse:
 
 rule build_models:
     input:
-        "data/genera.csv"
+        "data/genera.csv",
         "data/western_diet.csv"
     output:
         directory("data/models")
@@ -28,7 +28,7 @@ rule build_models:
 
 rule tradeoff:
     input:
-        directory("data/models")
+        directory("data/models"),
         "data/recent.csv"
     output:
         "data/tradeoff.csv"
@@ -39,8 +39,8 @@ rule media_and_rates:
     input:
         directory("data/models")
     output:
-        "data/growth_rates.csv"
-        "data/minimal_imports.csv"
+        "data/growth_rates.csv",
+        "data/minimal_imports.csv",
         "data/minimal_fluxes.csv.gz"
     script:
         "workflows/media_and_gcs.py"
@@ -63,14 +63,14 @@ rule elasticities:
 
 rule rate_figures:
     input:
-        "data/replication_rates.csv"
+        "data/replication_rates.csv",
         "data/tradeoff.csv"
     output:
-        "figures/dists.svg"
-        "figures/non_zero.svg"
-        "figures/percent_growing.svg"
-        "figures/gcs.svg"
-        "figures/community_growth.svg"
+        "figures/dists.svg",
+        "figures/non_zero.svg",
+        "figures/percent_growing.svg",
+        "figures/gcs.svg",
+        "figures/community_growth.svg",
         "figures/rate_vs_abundance.png"
 
 rule knockout_figures:
@@ -83,16 +83,16 @@ rule knockout_figures:
 
 rule exchange_figures:
     input:
-        "data/growth_rates.csv"
-        "data/minimal_imports.csv"
-        "data/minimal_fluxes.csv.gz"
+        "data/growth_rates.csv",
+        "data/minimal_imports.csv",
+        "data/minimal_fluxes.csv.gz",
         "data/metabolites.csv"
     output:
-        "figures/media.png"
-        "figures/scfas_prod.svg"
-        "figures/scfas_consumption.svg"
-        "figures/scfas_net.svg"
-        "figures/scfas.svg"
+        "figures/media.png",
+        "figures/scfas_prod.svg",
+        "figures/scfas_consumption.svg",
+        "figures/scfas_net.svg",
+        "figures/scfas.svg",
         "figures/individual_media.png"
     script:
         "workflows/exchange_figs.py"
