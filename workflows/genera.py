@@ -33,7 +33,12 @@ agora = micom.data.agora
 agora_genus = agora.groupby("genus").apply(reduce_group)
 
 genera = pd.read_csv("data/abundances.csv")
-genera = genera[genera["rank"] == "genus"]
+genera = (
+    genera.groupby(["rank", "id", "class", "order", "family", "genus"])
+    .reads.sum()
+    .reset_index()
+)
+
 
 genus_models = pd.merge(genera, agora_genus, on="genus")
 genus_models = genus_models.rename(columns={"id_x": "samples"})[keep]
