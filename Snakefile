@@ -11,7 +11,7 @@ rule all:
 
 rule collapse:
     input:
-        "data/abundance.csv"
+        "data/abundances.csv"
     output:
         "data/genera.csv"
     script:
