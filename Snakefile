@@ -1,6 +1,13 @@
+samples = ["ERR260275", "ERR260214", "ERR260174"]
+
 rule all:
     input:
         "data/growth_rates.csv"
+        "data/knockouts.csv"
+        "figures/gcs.svg"
+        "figures/circos.svg"
+        "figures/media.png"
+        expand("figures/elasticities_{s}.png", s=samples)
 
 rule collapse:
     input:
@@ -46,7 +53,6 @@ rule knockouts:
     script:
         "workflow/knockouts.py"
 
-samples = ["ERR260275", "ERR260214", "ERR260174"]
 rule elasticities:
     input:
         directory("data/models")
