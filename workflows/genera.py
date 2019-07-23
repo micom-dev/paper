@@ -32,12 +32,7 @@ agora_genus = agora.groupby("genus").apply(reduce_group).reset_index(drop=True)
 genera = pd.read_csv("data/abundances.csv")
 genera = (
     genera.groupby(["rank", "id", "class", "order", "family", "genus"])
-    .apply(
-        lambda df: pd.DataFrame(
-            {"reads": df.reads.sum(), "relative": df.relative.sum()},
-            index=df.genus[1],
-        )
-    )
+    .sum()
     .reset_index()
 )
 
