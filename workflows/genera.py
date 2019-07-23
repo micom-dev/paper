@@ -32,7 +32,7 @@ def reduce_group(df):
 agora = micom.data.agora
 agora_genus = agora.groupby("genus").apply(reduce_group)
 
-genera = pd.read_csv("data/abundance.csv")
+genera = pd.read_csv("data/abundances.csv")
 genera = genera[genera["rank"] == "genus"]
 
 genus_models = pd.merge(genera, agora_genus, on="genus")
