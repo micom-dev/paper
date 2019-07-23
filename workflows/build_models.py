@@ -13,16 +13,13 @@ try:
 except NameError:
     max_procs = 20
 
-taxonomy = pd.read_csv("data/genera.csv").dropna(subset=["agora_id"])
-taxonomy["file"] = taxonomy.agora_id.apply(
-    lambda ids: ["data/agora/" + i + ".xml" for i in ids.split("|")]
+taxonomy = pd.read_csv("data/species.csv")
+taxonomy["file"] = taxonomy.file.apply(
+    lambda ids: ["data/agora/" + i for i in ids.split("|")]
 )
-taxonomy.name = taxonomy.name.replace(r"[^A-Za-z0-9_\s]", "", regex=True)
-taxonomy.name = taxonomy.name.replace(r"\s+", "_", regex=True)
+taxonomy["name"] = taxonomy.genus + "_" + taxonomy.species
 assert not taxonomy.name.str.contains(" ").any()
-taxonomy = taxonomy.rename(
-    columns={"id": "samples", "name": "id", "reads": "abundance"}
-)
+taxonomy = taxonomy.rename(columns={"name": "id", "reads": "abundance"})
 
 diet = pd.read_csv("data/western_diet.csv")
 diet.index = diet.reaction = diet.reaction.str.replace("_e", "_m")

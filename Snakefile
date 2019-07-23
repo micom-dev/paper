@@ -13,13 +13,13 @@ rule collapse:
     input:
         "data/abundances.csv"
     output:
-        "data/genera.csv"
+        "data/species.csv"
     script:
-        "workflows/genera.py"
+        "workflows/species.py"
 
 rule build_models:
     input:
-        "data/genera.csv",
+        "data/species.csv",
         "data/western_diet.csv"
     output:
         directory("data/models")
