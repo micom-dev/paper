@@ -9,15 +9,12 @@ keep = [
     "order",
     "family",
     "genus",
-    "oxygen_status",
+    "oxygenstat",
     "metabolism",
     "gram",
-    "type",
-    "pubseed_id",
-    "genome_size",
+    "mtype",
     "genes",
     "file",
-    "name",
     "reads",
     "relative",
 ]
@@ -30,15 +27,18 @@ def reduce_group(df):
 
 
 agora = micom.data.agora
-agora_genus = agora.groupby("genus").apply(reduce_group)
+agora_genus = agora.groupby("genus").apply(reduce_group).reset_index()
 
 genera = pd.read_csv("data/abundances.csv")
 genera = (
     genera.groupby(["rank", "id", "class", "order", "family", "genus"])
-    .reads.sum()
+    .apply(
+        lambda df: pd.DataFrame(
+            {"reads": df.reads.sum(), "relative": df.relative.sum()}
+        )
+    )
     .reset_index()
 )
-
 
 genus_models = pd.merge(genera, agora_genus, on="genus")
 genus_models = genus_models.rename(columns={"id_x": "samples"})[keep]
