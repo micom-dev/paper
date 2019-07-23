@@ -9,8 +9,8 @@ annotations <- c("id", "direction")
 
 
 save_tables <- function(sl, rates) {
-    fwrite(sl$abundace, "data/abundances.csv")
-    fwrite(rates$rates, "data/replication_rates.csv")
+    fwrite(sl$abundance, "data/abundances.csv")
+    fwrite(rates$rate, "data/replication_rates.csv")
 }
 
 
