@@ -14,6 +14,7 @@ rule collapse:
         "data/abundances.csv"
     output:
         "data/species.csv"
+    threads: 1
     script:
         "workflows/species.py"
 
@@ -77,9 +78,9 @@ rule rate_figures:
         "figures/gcs.svg",
         "figures/community_growth.svg",
         "figures/rate_vs_abundance.png"
-     threads: 1
-     script:
-	"workflow/rate_figs.py"
+    threads: 1
+    script:
+        "workflow/rate_figs.py"
 
 rule knockout_figures:
     input:
@@ -115,4 +116,3 @@ rule elasticity_figures:
     threads: 1
     script:
         "workflows/elasticity_figs.py"
-
