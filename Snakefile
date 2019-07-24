@@ -30,7 +30,7 @@ rule build_models:
 
 rule tradeoff:
     input:
-        directory("data/models"),
+        "data/models",
         "data/recent.csv"
     output:
         "data/tradeoff.csv"
@@ -40,7 +40,7 @@ rule tradeoff:
 
 rule media_and_rates:
     input:
-        directory("data/models")
+        "data/models"
     output:
         "data/growth_rates.csv",
         "data/minimal_imports.csv",
@@ -51,7 +51,7 @@ rule media_and_rates:
 
 rule knockouts:
     input:
-        directory("data/models")
+        "data/models"
     output:
         "data/knockouts.csv"
     threads: 32
@@ -60,7 +60,7 @@ rule knockouts:
 
 rule elasticities:
     input:
-        directory("data/models")
+        "data/models"
     output:
         expand("data/elasticities_{s}.csv", s=samples)
     threads: 3
