@@ -22,7 +22,7 @@ def growth_rates(sam):
     # Get growth rates
     sol = com.cooperative_tradeoff(fraction=tradeoffs)
     df = []
-    for i, s in enumerate(sol):
+    for i, s in enumerate(sol.solution):
         rates = s.members
         rates["tradeoff"] = tradeoffs[i]
         rates["sample"] = sam
