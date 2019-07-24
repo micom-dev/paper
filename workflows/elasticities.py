@@ -17,7 +17,7 @@ except NameError:
 
 def elasticities(sam):
     """Get the exchange elasticities for a sample."""
-    model_file = "models/" + sam + ".pickle"
+    model_file = "data/models/" + sam + ".pickle"
     out_file = "data/elasticities_" + sam + ".csv"
     if isfile(out_file):
         return

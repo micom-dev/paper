@@ -31,7 +31,7 @@ def growth_rates(sam):
     return df
 
 
-samples = pd.read_csv("recent.csv")
+samples = pd.read_csv("data/recent.csv")
 rates = workflow(growth_rates, samples.run_accession, max_procs)
 rates = pd.concat(samples)
 rates.to_csv("data/tradeoff.csv")

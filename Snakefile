@@ -80,7 +80,7 @@ rule rate_figures:
         "figures/rate_vs_abundance.png"
     threads: 1
     script:
-        "workflow/rate_figs.py"
+        "workflow/growth_rate_figs.py"
 
 rule knockout_figures:
     input:

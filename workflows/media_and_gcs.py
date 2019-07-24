@@ -16,7 +16,7 @@ except NameError:
 
 
 def media_and_gcs(sam):
-    com = load_pickle("models/" + sam + ".pickle")
+    com = load_pickle("data/models/" + sam + ".pickle")
 
     # Get growth rates
     sol = com.cooperative_tradeoff(fraction=0.5)
@@ -36,7 +36,7 @@ def media_and_gcs(sam):
     return {"medium": med, "gcs": rates, "fluxes": fluxes}
 
 
-samples = pd.read_csv("recent.csv")
+samples = pd.read_csv("data/recent.csv")
 gcs = pd.DataFrame()
 media = pd.DataFrame()
 fluxes = pd.DataFrame()
