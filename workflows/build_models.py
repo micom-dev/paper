@@ -1,5 +1,6 @@
 """Builds the community models."""
 
+from os import makedirs
 from os.path import isfile
 import micom
 from micom import Community
@@ -13,7 +14,9 @@ try:
 except NameError:
     max_procs = 20
 
-taxonomy = pd.read_csv("data/species.csv")
+makedirs("data/models", exist_ok = True)
+
+taxonomy = pd.read_csv("data/species.csv").query("relative > 1e-3")
 taxonomy["file"] = taxonomy.file.apply(
     lambda ids: ["data/agora/" + i for i in ids.split("|")]
 )

@@ -23,6 +23,7 @@ rule build_models:
         "data/western_diet.csv"
     output:
         directory("data/models")
+    threads: 32
     script:
         "workflows/build_models.py"
 
@@ -32,6 +33,7 @@ rule tradeoff:
         "data/recent.csv"
     output:
         "data/tradeoff.csv"
+    threads: 32
     script:
         "workflows/tradeoff.py"
 
@@ -42,6 +44,7 @@ rule media_and_rates:
         "data/growth_rates.csv",
         "data/minimal_imports.csv",
         "data/minimal_fluxes.csv.gz"
+    threads: 32
     script:
         "workflows/media_and_gcs.py"
 
@@ -50,6 +53,7 @@ rule knockouts:
         directory("data/models")
     output:
         "data/knockouts.csv"
+    threads: 32
     script:
         "workflow/knockouts.py"
 
@@ -58,6 +62,7 @@ rule elasticities:
         directory("data/models")
     output:
         expand("data/elasticities_{s}.csv", s=samples)
+    threads: 3
     script:
         "workflow/elasticities.py"
 
@@ -72,12 +77,16 @@ rule rate_figures:
         "figures/gcs.svg",
         "figures/community_growth.svg",
         "figures/rate_vs_abundance.png"
+     threads: 1
+     script:
+	"workflow/rate_figs.py"
 
 rule knockout_figures:
     input:
         "data/knockouts.csv"
     output:
         "figures/circos.svg"
+    threads: 1
     script:
         "workflows/knockout_figs.py"
 
@@ -94,6 +103,7 @@ rule exchange_figures:
         "figures/scfas_net.svg",
         "figures/scfas.svg",
         "figures/individual_media.png"
+    threads: 1
     script:
         "workflows/exchange_figs.py"
 
@@ -102,6 +112,7 @@ rule elasticity_figures:
         expand("data/elasticities_{s}.csv", s=samples)
     output:
         expand("figures/elasticities_{s}.png", s=samples)
+    threads: 1
     script:
         "workflows/elasticity_figs.py"
 

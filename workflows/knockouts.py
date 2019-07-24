@@ -21,6 +21,6 @@ def knockout(sam):
     return ko
 
 
-samples = pd.read_csv("recent.csv")
+samples = pd.read_csv("data/recent.csv")
 kos = workflow(knockout, samples.run_accession, max_procs)
 pd.concat(kos).to_csv("data/knockouts.csv")
