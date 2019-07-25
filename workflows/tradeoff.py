@@ -20,7 +20,11 @@ def growth_rates(sam):
     com = load_pickle("data/models/" + sam + ".pickle")
 
     # Get growth rates
-    sol = com.cooperative_tradeoff(fraction=tradeoffs)
+    try:
+        sol = com.cooperative_tradeoff(fraction=tradeoffs)    
+    except Exception as e:
+        print("Sample %s could not be optimized." % sam)
+        return pd.DataFrame({"tradeoff": tradeoffs, "growth_rate": 0, "sample": sam})
     df = []
     for i, s in enumerate(sol.solution):
         rates = s.members
