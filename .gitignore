@@ -115,3 +115,12 @@ data/slimm_reports
 data/raw
 .drake
 packrat/lib*/
+data/agora
+data/models
+*.zip
+.Rprofile
+rlib
+.snakemake
+.vscode
+.benchmarks
+

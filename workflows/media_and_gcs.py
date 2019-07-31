@@ -45,7 +45,7 @@ results = workflow(media_and_gcs, samples.run_accession, max_procs)
 
 for r in results:
     gcs = gcs.append(r["gcs"])
-    media = media.append(r["media"])
+    media = media.append(r["medium"])
     fluxes = fluxes.append(r["fluxes"])
 
 gcs.to_csv("data/growth_rates.csv")

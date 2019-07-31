@@ -56,7 +56,7 @@ rule knockouts:
         "data/knockouts.csv"
     threads: 32
     script:
-        "workflow/knockouts.py"
+        "workflows/knockouts.py"
 
 rule elasticities:
     input:
@@ -65,7 +65,7 @@ rule elasticities:
         expand("data/elasticities_{s}.csv", s=samples)
     threads: 3
     script:
-        "workflow/elasticities.py"
+        "workflows/elasticities.py"
 
 rule rate_figures:
     input:
@@ -80,7 +80,7 @@ rule rate_figures:
         "figures/rate_vs_abundance.png"
     threads: 1
     script:
-        "workflow/growth_rate_figs.py"
+        "workflows/growth_rate_figs.py"
 
 rule knockout_figures:
     input:

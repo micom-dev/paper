@@ -4,7 +4,7 @@ import pandas as pd
 import micom
 
 
-tax = pd.read_csv("data/abundances.csv")
+tax = pd.read_csv("data/abundances.csv").query("kingdom == 'Bacteria'")
 tax.species = tax.species.str.split(" ").str[1]
 agora = micom.data.agora
 taxa = ["kingdom", "phylum", "class", "order", "family", "genus", "species"]
@@ -20,15 +20,15 @@ def taxa_stats(taxonomy, rank):
             "sd_percent_model",
         ]
     )
-    assigned = taxonomy.dropna().groupby("id").relative.sum()
+    assigned = taxonomy.dropna(subset=[rank]).groupby("id").relative.sum()
     if rank == "superkingdom":
         arank = "kingdom"
     if rank == "class":
         arank = "mclass"
     else:
         arank = rank
-    good = taxonomy[rank].isin(agora[arank])
-    has_model = taxonomy[good].dropna().groupby("id").relative.sum()
+    good = taxonomy[rank].isin(agora[arank].dropna())
+    has_model = taxonomy[good].groupby("id").relative.sum()
     res.iloc[:] = [
         taxonomy[rank].nunique(),
         assigned.mean(),
