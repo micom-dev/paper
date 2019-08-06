@@ -15,7 +15,7 @@ def direction(els, rid):
 
 elast = []
 for sa in samples:
-    e = pd.read_csv("data/" + sa + ".csv")
+    e = pd.read_csv("data/elasticities_" + sa + ".csv")
     e["id"] = sa
     maxs = e.groupby("reaction").elasticity.apply(lambda x: x.abs().max())
     e = e.assign(

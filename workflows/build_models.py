@@ -14,13 +14,13 @@ try:
 except NameError:
     max_procs = 20
 
-makedirs("data/models", exist_ok = True)
+makedirs("data/models", exist_ok=True)
 
-taxonomy = pd.read_csv("data/species.csv").query("relative > 1e-3")
+taxonomy = pd.read_csv("data/genera.csv").query("relative > 1e-3")
 taxonomy["file"] = taxonomy.file.apply(
     lambda ids: ["data/agora/" + i for i in ids.split("|")]
 )
-taxonomy["name"] = taxonomy.genus + "_" + taxonomy.species
+taxonomy["name"] = taxonomy.genus
 assert not taxonomy.name.str.contains(" ").any()
 taxonomy = taxonomy.rename(columns={"name": "id", "reads": "abundance"})
 

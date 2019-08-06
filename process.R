@@ -3,7 +3,7 @@ library(futile.logger)
 library(drake)
 
 flog.appender(appender.tee("mbtools.log"))
-options(mc.cores = 20)
+options(mc.cores = 1)
 pattern <- "(\\w+)_(\\d+)\\.fastq.gz"
 annotations <- c("id", "direction")
 

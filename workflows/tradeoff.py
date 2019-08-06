@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 
-tradeoffs = np.arange(0.05, 1.01, 0.05)
+tradeoffs = np.arange(0.1, 1.01, 0.1)
 micom.logger.file_logger("micom.log")
 logger = micom.logger.logger
 try:
@@ -35,7 +35,7 @@ def growth_rates(sam):
         )
     for i, s in enumerate(sol.solution):
         rates = s.members
-        rates["tradeoff"] = tradeoffs[i]
+        rates["tradeoff"] = sol.tradeoff[i]
         rates["sample"] = sam
         df.append(rates)
     df = pd.concat(df)

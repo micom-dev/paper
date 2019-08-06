@@ -5,12 +5,13 @@ import micom
 
 
 tax = pd.read_csv("data/abundances.csv").query("kingdom == 'Bacteria'")
-tax.species = tax.species.str.split(" ").str[1]
+tax.taxa_id = tax.taxa_id.str.replace("*", "").astype("int")
 agora = micom.data.agora
+agora.species = agora.genus + " " + agora.species
 taxa = ["kingdom", "phylum", "class", "order", "family", "genus", "species"]
 
 
-def taxa_stats(taxonomy, rank):
+def taxa_stats(taxonomy, rank, agora):
     res = pd.Series(
         index=[
             "n_unique",
@@ -23,7 +24,7 @@ def taxa_stats(taxonomy, rank):
     assigned = taxonomy.dropna(subset=[rank]).groupby("id").relative.sum()
     if rank == "superkingdom":
         arank = "kingdom"
-    if rank == "class":
+    elif rank == "class":
         arank = "mclass"
     else:
         arank = rank
@@ -40,5 +41,4 @@ def taxa_stats(taxonomy, rank):
     return res
 
 
-stats = pd.concat([taxa_stats(tax, ta) for ta in taxa], axis=1)
-
+stats = pd.concat([taxa_stats(tax, ta, agora) for ta in taxa], axis=1)

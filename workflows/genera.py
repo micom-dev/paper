@@ -30,12 +30,10 @@ agora = micom.data.agora
 agora_genus = agora.groupby("genus").apply(reduce_group).reset_index(drop=True)
 
 genera = pd.read_csv("data/abundances.csv")
-genera = (
-    genera.groupby(["rank", "id", "class", "order", "family", "genus"])
-    .sum()
-    .reset_index()
-)
+genera = genera.groupby(["id", "genus"]).sum().reset_index()
 
 genus_models = pd.merge(genera, agora_genus, on="genus", suffixes=["_x", ""])
-genus_models = genus_models.rename(columns={"id_x": "samples"})[keep]
+genus_models = genus_models.rename(
+    columns={"id_x": "samples", "mclass": "class"}
+)[keep]
 genus_models.to_csv("data/genera.csv", index=False)

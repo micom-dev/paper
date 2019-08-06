@@ -13,14 +13,14 @@ rule collapse:
     input:
         "data/abundances.csv"
     output:
-        "data/species.csv"
+        "data/genera.csv"
     threads: 1
     script:
-        "workflows/species.py"
+        "workflows/genera.py"
 
 rule build_models:
     input:
-        "data/species.csv",
+        "data/genera.csv",
         "data/western_diet.csv"
     output:
         directory("data/models")
@@ -67,7 +67,7 @@ rule elasticities:
     script:
         "workflows/elasticities.py"
 
-rule rate_figures:
+rule tradeoff_figures:
     input:
         "data/replication_rates.csv",
         "data/tradeoff.csv"
@@ -75,6 +75,17 @@ rule rate_figures:
         "figures/dists.svg",
         "figures/non_zero.svg",
         "figures/percent_growing.svg",
+        "figures/within_sample_correlations.svg",
+        "figures/across_sample_correlations.svg"
+    threads: 1
+    script:
+        "workflows/tradeoff_figs.py"
+
+rule rate_figures:
+    input:
+        "data/tradeoff.csv"
+    output:
+        "figures/dists.svg",
         "figures/gcs.svg",
         "figures/community_growth.svg",
         "figures/rate_vs_abundance.png"

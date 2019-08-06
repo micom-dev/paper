@@ -18,7 +18,7 @@ ko["norm_change"] = normalized
 
 pos = ko[ko.norm_change.abs() > 0.5]
 pos = pos[pos.knocked != pos.genus]
-graph = nx.from_pandas_dataframe(pos, "knocked", "genus", "norm_change")
+graph = nx.from_pandas_edgelist(pos, "knocked", "genus", "norm_change")
 
 for idx, _ in graph.nodes(data=True):
     graph.node[idx]["degree"] = float(graph.degree(idx))

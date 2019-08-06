@@ -19,17 +19,21 @@ def media_and_gcs(sam):
     com = load_pickle("data/models/" + sam + ".pickle")
 
     # Get growth rates
-    sol = com.cooperative_tradeoff(fraction=0.5)
-    rates = sol.members["growth_rate"].copy()
-    rates["community"] = sol.growth_rate
-    rates.name = sam
+    try:
+        sol = com.cooperative_tradeoff(fraction=0.5)
+        rates = sol.members["growth_rate"].copy()
+        rates["community"] = sol.growth_rate
+        rates.name = sam
+    except Exception:
+        flog.warning("Could not solve cooperative tradeoff for %s." % sam)
+        return None
 
     # Get the minimal medium
-    med = minimal_medium(com, 0.95 * sol.growth_rate)
+    med = minimal_medium(com, 0.95 * sol.growth_rate, exports=True)
     med.name = sam
 
     # Apply medium and reoptimize
-    com.medium = med
+    com.medium = med[med > 0]
     sol = com.cooperative_tradeoff(fraction=0.5, fluxes=True, pfba=False)
     fluxes = sol.fluxes
     fluxes["sample"] = sam

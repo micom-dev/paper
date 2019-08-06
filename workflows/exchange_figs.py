@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from adjustText import adjust_text
 from scipy.stats import ttest_ind
+import numpy as np
 
 sample_keep = ["run_accession", "subset", "status", "type"]
 
@@ -25,10 +26,10 @@ def test_vs_ref(x, y, ref="CTRL"):
 def box_jitter(x, y, **kwargs):
     sns.boxplot(x=x, y=y, color="white")
     sns.stripplot(x=x, y=y, color="black")
-    print(test_vs_ref(x, y))
+    print(test_vs_ref(y, x))
 
 
-def export_rates_plot(fluxes, groups, samples):
+def export_rates_plot(fluxes, groups, samples, log=False):
     dfs = []
     for name, filt in groups.items():
         df = fluxes[fluxes.reaction.str.contains(filt)].copy()
@@ -42,17 +43,25 @@ def export_rates_plot(fluxes, groups, samples):
     fluxes["name"] = fluxes.status + " " + fluxes.type.fillna("")
     fluxes.name = fluxes.name.str.strip()
     fluxes = fluxes.sort_values("name")
+    if log:
+        fluxes.flux = np.log10(fluxes.flux)
     grid = sns.FacetGrid(
-        fluxes, col="subset", row="metabolite", sharey=False, sharex=False
+        fluxes,
+        col="subset",
+        row="metabolite",
+        sharey=False,
+        sharex=True,
+        aspect=1.6,
     )
-    g = grid.map(box_jitter, "name", "flux", color="white")
+    g = grid.map(box_jitter, "flux", "name", color="white")
     return g
 
 
 media = pd.read_csv("data/minimal_imports.csv", index_col=0).fillna(0.0)
 media["sample"] = media.index
 media = media.melt(id_vars="sample", var_name="reaction", value_name="flux")
-metabolites = pd.read_csv("data/metabolites.csv", index_col=0)
+metabolites = pd.read_csv("data/metabolites.csv")
+metabolites["id"] = metabolites.abbreviation + "_m"
 media["id"] = media.reaction.str.lstrip("EX_")
 media = pd.merge(media, metabolites, on="id")
 samples = pd.read_csv("data/recent.csv")[sample_keep]
@@ -61,13 +70,13 @@ media = pd.merge(media, samples, on="sample")
 
 mat = media.pivot("id", "sample", "flux")
 mat = mat.apply(lambda x: x / x.abs().max(), axis=1)
-g = sns.clustermap(mat, cmap="RdBu", figsize=(40, 42))
+g = sns.clustermap(mat, cmap="RdBu", figsize=(60, 70), center=0)
 g.ax_heatmap.set_xlabel("")
 g.ax_heatmap.set_ylabel("")
 plt.savefig("figures/media.png")
 plt.close()
 
-fluxes = pd.read_csv("figures/minimal_fluxes.csv.gz", compression="gzip")
+fluxes = pd.read_csv("data/minimal_fluxes.csv.gz", compression="gzip")
 fluxes = fluxes.melt(
     id_vars=["sample", "compartment"], var_name="reaction", value_name="flux"
 )
@@ -75,20 +84,19 @@ fluxes = fluxes[
     fluxes.reaction.str.startswith("EX_") & (fluxes.compartment != "medium")
 ].dropna()
 fluxes["taxa"] = fluxes.compartment + "_" + fluxes["sample"]
+fluxes["name"] = fluxes.compartment.str.replace("_", " ")
 
-samples = pd.read_csv("figures/recent.csv")[
+samples = pd.read_csv("data/recent.csv")[
     ["run_accession", "status", "subset", "type"]
 ]
 samples = samples.rename(columns={"run_accession": "sample"})
 samples.index = samples["sample"]
-genera = pd.read_csv("data/genera.csv")[["samples", "name", "reads"]]
-totals = genera.groupby("samples").reads.sum()
-genera["relative"] = genera.reads / totals[genera.samples].values
+species = pd.read_csv("data/genera.csv")[["samples", "genus", "reads"]]
+species["name"] = species.genus
+totals = species.groupby("samples").reads.sum()
+species["relative"] = species.reads / totals[species.samples].values
 fluxes = pd.merge(
-    fluxes,
-    genera,
-    left_on=["sample", "compartment"],
-    right_on=["samples", "name"],
+    fluxes, species, left_on=["sample", "name"], right_on=["samples", "name"]
 )
 fluxes["tot_flux"] = fluxes.flux * fluxes.relative
 plt.tight_layout()
@@ -103,7 +111,7 @@ plt.savefig("figures/scfas_consumption.svg")
 plt.close()
 
 print("Net rates:")
-export_rates_plot(fluxes, SCFAs, samples)
+export_rates_plot(fluxes, SCFAs, samples, log=True)
 plt.savefig("figures/scfas_net.svg")
 plt.close()
 
@@ -114,13 +122,11 @@ for name, filt in SCFAs.items():
     fl["metabolite"] = name
     scfa.append(fl)
     mat = fl.pivot("sample", "name", "tot_flux")
-    mat = mat.loc[:, mat.abs().mean() > 0.5].fillna(0)
+    mat = mat.loc[
+        :, mat.abs().mean().sort_values(ascending=False).index[0:5]
+    ].fillna(0)
     sns.clustermap(
-        mat,
-        cmap="seismic",
-        center=0,
-        figsize=(mat.shape[1] / 2, 10),
-        yticklabels=False,
+        mat, cmap="seismic", center=0, figsize=(6, 12), yticklabels=False
     )
     plt.savefig("figures/" + name + ".svg")
     plt.close()
@@ -149,12 +155,12 @@ plt.close()
 
 
 mat = fluxes.pivot("taxa", "reaction", "flux").fillna(0.0)
-taxa = mat.index.str.split("_").str[0]
+taxa = mat.index.str.split("_ERR").str[0]
 tsne = TSNE(n_components=2).fit_transform(mat)
 tsne = pd.DataFrame(tsne, columns=["x", "y"], index=mat.index)
 tsne["taxa"] = taxa
 sns.set(font_scale=1.5, style="ticks")
-g = sns.FacetGrid(tsne, hue="taxa", size=10, aspect=16 / 10)
+g = sns.FacetGrid(tsne, hue="taxa", height=10, aspect=16 / 10)
 gm = g.map(plt.scatter, "x", "y", alpha=0.25)
 means = tsne.groupby(taxa).agg("median").reset_index()
 texts = means.apply(
