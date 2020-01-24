@@ -2,8 +2,10 @@ library(mbtools)
 library(futile.logger)
 library(drake)
 
+# change to specify number of cores
+options(mc.cores = 8)
+
 flog.appender(appender.tee("mbtools.log"))
-options(mc.cores = 1)
 pattern <- "(\\w+)_(\\d+)\\.fastq.gz"
 annotations <- c("id", "direction")
 
@@ -33,13 +35,13 @@ plan <- drake_plan(
         maxEE = 10),
     aligned = align_short_reads(
         processed,
-        reference = "../refs/ABVF_SP_genomes.fna.gz",
+        reference = "data/refs/ABVF_SP_genomes.fna.gz",
         alignment_dir = "data/alignments"
     ),
     sl = slimm(
         aligned,
         reports = file_out("data/slimm_reports"),
-        database = file_in("../refs/ABVF_SP_CMP_genomes.sldb"),
+        database = file_in("data/refs/ABVF_SP_CMP_genomes.sldb"),
         bin_width = 100
     ),
     rates = replication_rates(sl),

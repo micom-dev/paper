@@ -4,9 +4,18 @@ import pandas as pd
 import networkx as nx
 import nxviz
 import seaborn as sns
+import numpy as np
 import matplotlib.pyplot as plt
 
-samples = ["ERR260275", "ERR260214", "ERR260174"]
+samples = {
+    "ERR260275": "healthy",
+    "ERR260214": "T2D metformin+",
+    "ERR260174": "T2D metformin-",
+}
+metabolites = pd.read_csv("data/metabolites.csv")[
+    ["abbreviation", "fullName", "keggId"]
+]
+SCFAs = {"butyrate": "EX_but(e)", "acetate": "EX_ac(e)", "propionate": "EX_ppa(e)"}
 
 
 def direction(els, rid):
@@ -17,54 +26,64 @@ elast = []
 for sa in samples:
     e = pd.read_csv("data/elasticities_" + sa + ".csv")
     e["id"] = sa
-    maxs = e.groupby("reaction").elasticity.apply(lambda x: x.abs().max())
-    e = e.assign(
-        norm_elasticity=e.elasticity.values / (maxs[e.reaction].values + 1e-6)
-    )
     elast.append(e)
 elast = pd.concat(elast)
-elast = elast[elast.direction != "zero"]
-elast.effector = elast.effector.str.replace("EX_", "").str.replace("_m", "")
+elast = elast[elast.direction == "forward"]
+elast["scfa"] = float("nan")
+for name, pattern in SCFAs.items():
+    elast.loc[elast.reaction.str.startswith(pattern), "scfa"] = name
 
-for sa in samples:
-    sns.kdeplot(elast[elast.id == sa].elasticity, bw=4, shade=True, label=sa)
-plt.legend()
-plt.xlabel("elasticity [a.u.]")
-plt.ylabel("density")
-plt.savefig("figures/elast_densities.svg")
-plt.close()
+production = (
+    elast.groupby(["id", "effector", "scfa"]).elasticity.sum().reset_index()
+)
+production["type"] = production.effector.apply(
+    lambda e: "diet" if e.startswith("EX_") else "abundance"
+)
+production["scfa"] = production.scfa + " " + production.id.map(samples)
+production["abbreviation"] = production.effector.str.replace("(EX_)|(_m)", "")
+production = pd.merge(production, metabolites, on="abbreviation", how="left")
+production.loc[production.fullName.isna(), "fullName"] = production.loc[
+    production.fullName.isna(), "abbreviation"
+]
 
-for sa in samples:
-    e = elast[elast.id == sa].copy()
-    e = e[(e.elasticity.abs() > 0.5) & (e.norm_elasticity.abs() > 0.5)]
-    graph = nx.from_pandas_edgelist(
-        e, source="effector", target="reaction", edge_attr="elasticity"
-    )
-    for idx, _ in graph.nodes(data=True):
-        if idx.startswith("EX_"):
-            d = direction(e, idx)
-            cl = "import flux" if d == "forward" else "export flux"
-        elif idx[0].isupper():
-            cl = "abundance"
-        else:
-            cl = "diet"
-        graph.node[idx]["class"] = cl
+cmap = sns.color_palette()[0:2]
+cmap = dict(zip(production.type.unique(), cmap))
+production.fullName = production.fullName.apply(
+    lambda s: s if len(s) < 24 else s[:24] + "..."
+)
+ty = production[["fullName", "type"]].drop_duplicates()
+ty = pd.Series(ty.type.values, index=ty.fullName)
+typecols = ty.map(cmap).rename("type")
+production = production.sort_values(by="id")
+mat = production.pivot_table(
+    index="scfa", columns="fullName", values="elasticity", fill_value=0
+)
+g = sns.clustermap(
+    mat,
+    cmap="seismic",
+    vmin=-production.elasticity.abs().max(),
+    vmax=production.elasticity.abs().max(),
+    figsize=(32, 4),
+    col_colors=typecols,
+    yticklabels=True,
+    xticklabels=True,
+    row_cluster=False,
+    cbar_kws={"fraction": 1.0},
+)
+for label in cmap:
+    g.ax_col_dendrogram.bar(0, 0, color=cmap[label], label=label, linewidth=0)
+g.ax_col_dendrogram.legend(loc="best", ncol=3, frameon=False)
+g.ax_heatmap.set_xlabel("")
+g.ax_heatmap.set_ylabel("")
+cold = g.ax_col_dendrogram.get_position()
+g.ax_col_dendrogram.set_position(
+    [cold.x0, cold.y0, cold.width, cold.height * 5]
+)
+g.ax_row_dendrogram.set_visible(False)
+g.cax.set_position([0.25, 0.5, 0.01, 0.5])
+g.savefig("figures/elasticities.png", dpi=300)
 
-    circos = nxviz.CircosPlot(
-        graph,
-        node_labels=True,
-        rotate_labels=True,
-        edge_color="elasticity",
-        edge_cmap="bwr",
-        edge_limits=(-150, 150),
-        node_color="class",
-        node_grouping="class",
-        node_order="class",
-        figsize=(20, 18),
-    )
-    circos.draw()
-    plt.tight_layout(rect=[0.1, 0.1, 0.8, 0.9])
-    plt.savefig("figures/elasticities_" + sa + ".png")
-    plt.close()
-
-but_ac = elast[(elast.reaction == "EX_but_m") | (elast.reaction == "EX_ac_m")]
+but = production[production.scfa.str.startswith("butyrate")].sort_values(
+    by="elasticity", ascending=False
+)
+print(but.head(20))

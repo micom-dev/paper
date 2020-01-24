@@ -5,6 +5,7 @@ import micom
 from micom import load_pickle
 from micom.media import minimal_medium
 from micom.workflows import workflow
+from micom.logger import logger
 
 
 micom.logger.file_logger("micom.log")
@@ -25,7 +26,7 @@ def media_and_gcs(sam):
         rates["community"] = sol.growth_rate
         rates.name = sam
     except Exception:
-        flog.warning("Could not solve cooperative tradeoff for %s." % sam)
+        logger.warning("Could not solve cooperative tradeoff for %s." % sam)
         return None
 
     # Get the minimal medium

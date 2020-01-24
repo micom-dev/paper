@@ -5,6 +5,7 @@ import micom
 
 
 tax = pd.read_csv("data/abundances.csv").query("kingdom == 'Bacteria'")
+tax.relative = tax.groupby("id").relative.apply(lambda a: a / a.sum())
 tax.taxa_id = tax.taxa_id.str.replace("*", "").astype("int")
 agora = micom.data.agora
 agora.species = agora.genus + " " + agora.species
@@ -17,6 +18,7 @@ def taxa_stats(taxonomy, rank, agora):
             "n_unique",
             "mean_percent_assigned",
             "sd_percent_assigned",
+            "n_model",
             "mean_percent_model",
             "sd_percent_model",
         ]
@@ -34,6 +36,7 @@ def taxa_stats(taxonomy, rank, agora):
         taxonomy[rank].nunique(),
         assigned.mean(),
         assigned.std(),
+        taxonomy[good][rank].nunique(),
         has_model.mean(),
         has_model.std(),
     ]
@@ -42,3 +45,4 @@ def taxa_stats(taxonomy, rank, agora):
 
 
 stats = pd.concat([taxa_stats(tax, ta, agora) for ta in taxa], axis=1)
+print(stats)

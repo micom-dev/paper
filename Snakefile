@@ -7,7 +7,7 @@ rule all:
         "figures/gcs.svg",
         "figures/circos.svg",
         "figures/media.png",
-        expand("figures/elasticities_{s}.png", s=samples)
+        "figures/elasticities.png"
 
 rule collapse:
     input:
@@ -24,6 +24,16 @@ rule build_models:
         "data/western_diet.csv"
     output:
         directory("data/models")
+    threads: 32
+    script:
+        "workflows/build_models.py"
+
+rule build_species_models:
+    input:
+        "data/species.csv",
+        "data/western_diet.csv"
+    output:
+        directory("data/species_models")
     threads: 32
     script:
         "workflows/build_models.py"
@@ -85,9 +95,7 @@ rule rate_figures:
     input:
         "data/tradeoff.csv"
     output:
-        "figures/dists.svg",
         "figures/gcs.svg",
-        "figures/community_growth.svg",
         "figures/rate_vs_abundance.png"
     threads: 1
     script:
@@ -123,7 +131,7 @@ rule elasticity_figures:
     input:
         expand("data/elasticities_{s}.csv", s=samples)
     output:
-        expand("figures/elasticities_{s}.png", s=samples)
+        "figures/elasticities.png"
     threads: 1
     script:
         "workflows/elasticity_figs.py"

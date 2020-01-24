@@ -113,6 +113,8 @@ data/alignments
 data/preprocessed
 data/slimm_reports
 data/raw
+data/elasticities_*.csv
+data/minimal_fluxes.csv
 .drake
 packrat/lib*/
 data/agora
