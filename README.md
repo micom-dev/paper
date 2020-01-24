@@ -181,7 +181,7 @@ for (sa in samples$run_accession) {
 ```
 
 You will also need to download the databases for [SLIMM](https://github.com/seqan/slimm/) which we will sue to assign taxonomy and
-obtain strain resolved coverage. Those can be obtained from `coming soon` and should be copied to `data/refs`.
+obtain strain resolved coverage. Those can be obtained [from here](https://doi.org/10.5281/zenodo.3626228) and should be copied to `data/refs`.
 
 ### Run the pipeline
 
