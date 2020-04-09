@@ -8,8 +8,8 @@ from micom.workflows import workflow
 from micom.logger import logger
 
 
-micom.logger.file_logger("micom.log")
 logger = micom.logger.logger
+logger.add("micom.log")
 try:
     max_procs = snakemake.threads
 except NameError:

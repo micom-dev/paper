@@ -70,7 +70,7 @@ MICOM models all biochemical reactions in all taxa, which means that the optimiz
 
 **CPLEX**
 
-After registering and downloading the CPLEX studio for your OS unpack it (by running the provided installer) to a directory of your choice (we will assume it's called ibm).
+After registering and downloading the CPLEX studio for your OS unpack it (by running the provided installer) to a directory of your choice (we will assume it's called `ibm`).
 
 Now install the CPLEX python package:
 

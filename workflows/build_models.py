@@ -7,8 +7,8 @@ from micom import Community
 import pandas as pd
 from micom.workflows import workflow
 
-micom.logger.file_logger("micom.log")
 logger = micom.logger.logger
+logger.add("micom.log")
 try:
     max_procs = snakemake.threads
 except NameError:

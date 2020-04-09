@@ -6,8 +6,8 @@ from micom import load_pickle
 from micom.media import minimal_medium
 from micom.workflows import workflow
 
-micom.logger.file_logger("micom.log")
 logger = micom.logger.logger
+logger.add("micom.log")
 try:
     max_procs = snakemake.threads
 except NameError:

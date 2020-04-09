@@ -8,8 +8,8 @@ import pandas as pd
 
 
 tradeoffs = np.arange(0.1, 1.01, 0.1)
-micom.logger.file_logger("micom.log")
 logger = micom.logger.logger
+logger.add("micom.log")
 try:
     max_procs = snakemake.threads
 except NameError:
