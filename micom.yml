@@ -1,0 +1,28 @@
+name: micom
+channels:
+    - conda-forge
+    - bioconda
+    - sbmlteam
+    - defaults
+dependencies:
+    - python=3.6
+    - numpy
+    - scipy
+    - python-libsbml-experimental
+    - tqdm
+    - ruamel.yaml
+    - tabulate
+    - pip
+    - ipython
+    - plotnine
+    - joypy
+    - seaborn
+    - scikit-bio
+    - networkx
+    - snakemake
+    - sra-tools
+    - pip:
+        - cobrapy
+        - adjustText
+        - git+https://github.com/cdiener/nxviz
+        - git+https://github.com/micom-dev/micom
