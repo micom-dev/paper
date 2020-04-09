@@ -22,7 +22,7 @@ dependencies:
     - snakemake
     - sra-tools
     - pip:
-        - cobrapy
+        - cobra
         - adjustText
         - git+https://github.com/cdiener/nxviz
         - git+https://github.com/micom-dev/micom
