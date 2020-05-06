@@ -8,7 +8,6 @@ dependencies:
     - python=3.6
     - numpy
     - scipy
-    - python-libsbml-experimental
     - tqdm
     - ruamel.yaml
     - tabulate
